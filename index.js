@@ -31,7 +31,7 @@ function countAndSumEvenNumbers(arr, min, max) {
 }
 
 // середнє арифметичне елементів масиву та кількість елементів
-function calculateAverageAndCountAboveAverage(arr) {
+function calculateAverage(arr) {
   let sum = 0;
   const values = [];
   for (let i = 0; i < arr.length; i++) {
@@ -158,7 +158,7 @@ console.log("Масив 2:", printArray(arr2));
 //   `Кількість парних елементів в діапазоні: ${countAndSum.count}, Сума: ${countAndSum.sum}`
 // );
 
-const averageAndCountAboveAverage = calculateAverageAndCountAboveAverage(arr1);
+const averageAndCountAboveAverage = calculateAverage(arr1);
 console.log(
   `Середнє арифметичне: ${averageAndCountAboveAverage.average}, Кількість елементів більших за середнє: ${averageAndCountAboveAverage.countAboveAverage}`
 );
