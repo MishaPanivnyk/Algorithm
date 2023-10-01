@@ -104,13 +104,38 @@ function removeDuplicates(arr) {
     return arr;
   }
 
-  const max = Math.max(...arr);
-  const min = Math.min(...arr);
+  let max = arr[0];
+  let min = arr[0];
 
-  return arr.filter((element) => {
+  // Знаходимо мінімальне та максимальне значення
+  for (let i = 1; i < arr.length; i++) {
+    const element = arr[i];
     const value = parseInt(element.split("_").pop(), 10);
-    return value !== max && value !== min;
-  });
+
+    if (value >= max) {
+      max = value;
+    }
+
+    if (value <= min) {
+      min = value;
+    }
+  }
+
+  const uniqueValues = {}; // Об'єкт для відстеження унікальних значень
+
+  const result = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    const element = arr[i];
+    const value = parseInt(element.split("_").pop(), 10);
+
+    if (value !== max && value !== min && !uniqueValues[element]) {
+      result.push(element);
+      uniqueValues[element] = true;
+    }
+  }
+
+  return result;
 }
 
 // Визначити середні арифметичні двох масивів. Утворити третій масив з
@@ -178,10 +203,10 @@ console.log("Конкатенований масив:", printArray(concatenatedA
 // console.log("Масив додатніх елементів:", printArray(positiveArray));
 // console.log("Масив від'ємних елементів:", printArray(negativeArray));
 
-// console.log(
-//   "Масив після видалення дублікатів максимума та мінімума:",
-//   printArray(removeDuplicates([...arr1]))
-// );
+console.log(
+  "Масив після видалення дублікатів максимума та мінімума:",
+  printArray(removeDuplicates([...arr1]))
+);
 
 const thirdArray = calculateAverageThirdArray(arr1, arr2);
 console.log("Третій масив:", printArray(thirdArray));
