@@ -65,7 +65,7 @@ function createSumArray(arr1, arr2) {
 
 // Утворити третій масив як конкатенацію двох масивів різної довжини.
 function concatenateArrays(arr1, arr2) {
-  return arr1.concat(arr2);
+  return [...arr1, ...arr2];
 }
 
 // В масиві поміняти місцями максимум та мінімум.
@@ -166,8 +166,8 @@ console.log(
 // const sumArray = createSumArray(arr1, arr2);
 // console.log("Масив з попарною сумою елементів двох масивів:", sumArray);
 
-// const concatenatedArray = concatenateArrays(arr1, arr2);
-// console.log("Конкатенований масив:", printArray(concatenatedArray));
+const concatenatedArray = concatenateArrays(arr1, arr2);
+console.log("Конкатенований масив:", printArray(concatenatedArray));
 
 // console.log(
 //   "Масив після обміну місцями максимума та мінімума:",
