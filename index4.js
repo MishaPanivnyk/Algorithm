@@ -30,6 +30,5 @@ function quickSort(arr, ascending) {
 }
 
 const arr = [5, 2, 9, 3, 6, 1, 8];
-const ascending = true;
-const sortedArr = quickSort(arr, ascending);
+const sortedArr = quickSort(arr, false);
 console.log(sortedArr);
