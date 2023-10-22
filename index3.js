@@ -1,12 +1,13 @@
-// Функція для створення матриці заданої довжини зі значеннями в заданому діапазоні
-function createMatrix(rows, cols, minValue, maxValue) {
+// Функція для створення матриці заданої довжини та діапазону значень
+function createMatrix(rows, columns, minValue, maxValue) {
   const matrix = [];
   for (let i = 0; i < rows; i++) {
     const row = [];
-    for (let j = 0; j < cols; j++) {
-      const randomValue =
+    for (let j = 0; j < columns; j++) {
+      // Генеруємо випадкове число в заданому діапазоні
+      const value =
         Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
-      row.push(randomValue);
+      row.push(value);
     }
     matrix.push(row);
   }
@@ -15,309 +16,304 @@ function createMatrix(rows, cols, minValue, maxValue) {
 
 // Функція для виведення матриці у вказаному форматі
 function printMatrix(matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
 
-  // Виведення заголовка стовпців
-  const header = [];
-  for (let j = 0; j < cols; j++) {
-    header.push(`    стовпець ${j + 1}`);
+  let header = "    ";
+  for (let j = 0; j < numCols; j++) {
+    header += `стовпець ${j + 1}     `;
   }
-  console.log(header.join("\t"));
+  console.log(header);
 
-  // Виведення рядків матриці
-  for (let i = 0; i < rows; i++) {
-    const rowValues = matrix[i].map((value) => String(value));
-    const rowString = `рядок ${i + 1}\t       ${rowValues.join("\t")}`;
-    console.log(rowString);
+  for (let i = 0; i < numRows; i++) {
+    let rowStr = `рядок ${i + 1}  `;
+    for (let j = 0; j < numCols; j++) {
+      rowStr += `${matrix[i][j]}              `;
+    }
+    console.log(rowStr);
   }
 }
-
-// Приклад використання:
-// const rows = 3;
-// const cols = 2;
-// const minValue = -10;
-// const maxValue = 10;
-
-// const matrix = createMatrix(rows, cols, minValue, maxValue);
-// printMatrix(matrix);
-
-function cyclicShiftMatrix(matrix, k) {
+// Функція для циклічного зсуву матриці на k позицій вправо та на k догори
+function cyclicShift(matrix, k) {
   const rows = matrix.length;
   const cols = matrix[0].length;
+  const shiftedMatrix = new Array(rows);
 
-  // Зсув вправо
   for (let i = 0; i < rows; i++) {
+    const newRow = (i - k + rows) % rows;
+    shiftedMatrix[newRow] = new Array(cols);
+
     for (let j = 0; j < cols; j++) {
-      const newIndex = (j + k) % cols;
-      matrix[i][newIndex] = matrix[i][j];
+      const newCol = (j - k + cols) % cols;
+      shiftedMatrix[newRow][newCol] = matrix[i][j];
     }
   }
 
-  // Заповнення порожніх місць нулями
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (j < k) {
-        matrix[i][j] = 0;
-      }
-    }
-  }
-
-  // Зсув вгору
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      const newIndex = (i + k) % rows;
-      matrix[newIndex][j] = matrix[i][j];
-    }
-  }
-
-  // Заповнення порожніх місць нулями
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (i < k) {
-        matrix[i][j] = 0;
-      }
-    }
-  }
+  return shiftedMatrix;
 }
 
-function sumElementsAfterThird(matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-  let sum = 0;
-
-  for (let i = 0; i < rows; i++) {
-    for (let j = 3; j < cols; j++) {
-      // Починаємо з індексу 3 (четвертий елемент)
+// Функція для знаходження суми елементів матриці, розміщених після третього елементу кожного рядка
+function sumAfterThirdElement(matrix) {
+  const sums = [];
+  for (let i = 0; i < matrix.length; i++) {
+    let sum = 0;
+    for (let j = 3; j < matrix[i].length; j++) {
       sum += matrix[i][j];
     }
+    sums.push(sum);
   }
-
-  return sum;
+  return sums;
 }
 
-function subtractRowMeans(matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-
-  for (let i = 0; i < rows; i++) {
-    const rowSum = matrix[i].reduce((acc, value) => acc + value, 0);
-    const rowMean = rowSum / cols;
-
-    for (let j = 0; j < cols; j++) {
-      matrix[i][j] -= rowMean;
+// Функція для віднімання від елементів кожного рядка матриці середнього арифметичного рядка
+function subtractRowAverage(matrix) {
+  const result = [];
+  for (let i = 0; i < matrix.length; i++) {
+    const row = [];
+    let sum = 0;
+    for (let j = 0; j < matrix[i].length; j++) {
+      sum += matrix[i][j];
     }
+    const average = sum / matrix[i].length;
+
+    for (let j = 0; j < matrix[i].length; j++) {
+      row.push(matrix[i][j] - Math.round(average));
+    }
+    result.push(row);
   }
+  return result;
 }
 
-function findAndRemoveMaxElements(matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
+// Функція для знаходження максимальних елементів у матриці та видалення відповідних рядків та стовпців
+function removeWithMax(matrix) {
+  if (matrix.length === 0 || matrix[0].length === 0) {
+    return [];
+  }
 
-  // Знаходження максимальних елементів у кожному стовпці
-  const maxInCols = Array(cols).fill(Number.MIN_SAFE_INTEGER);
+  const maxValues = new Array(matrix.length);
+  for (let i = 0; i < matrix.length; i++) {
+    maxValues[i] = Math.max(...matrix[i]);
+  }
 
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (matrix[i][j] > maxInCols[j]) {
-        maxInCols[j] = matrix[i][j];
-      }
+  let maxIndex = 0;
+  for (let i = 1; i < maxValues.length; i++) {
+    if (maxValues[i] > maxValues[maxIndex]) {
+      maxIndex = i;
     }
   }
 
-  // Знаходження максимальних елементів у кожному рядку
-  const maxInRows = matrix.map((row) => Math.max(...row));
-
-  // Видалення рядків, які містять максимальні елементи
-  for (let i = rows - 1; i >= 0; i--) {
-    if (maxInRows[i] === Math.max(...maxInCols)) {
-      matrix.splice(i, 1);
-    }
-  }
-
-  // Видалення стовпців, які містять максимальні елементи
-  const colsToDelete = maxInCols.reduce((acc, max, index) => {
-    if (max === Math.max(...maxInCols)) {
-      acc.push(index);
-    }
-    return acc;
-  }, []);
-
-  for (let i = colsToDelete.length - 1; i >= 0; i--) {
-    for (let j = 0; j < matrix.length; j++) {
-      matrix[j].splice(colsToDelete[i], 1);
-    }
-  }
-}
-
-function swapColumnsWithMaxAndMin(matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-
-  // Знаходження індексів стовпців з максимальним і мінімальним елементами
-  let maxColIndex = 0;
-  let minColIndex = 0;
-  let maxElement = matrix[0][0];
-  let minElement = matrix[0][0];
-
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (matrix[i][j] > maxElement) {
-        maxElement = matrix[i][j];
-        maxColIndex = j;
-      }
-      if (matrix[i][j] < minElement) {
-        minElement = matrix[i][j];
-        minColIndex = j;
-      }
-    }
-  }
-
-  // Поміняти місцями стовпці з максимальним і мінімальним елементами
-  for (let i = 0; i < rows; i++) {
-    const temp = matrix[i][maxColIndex];
-    matrix[i][maxColIndex] = matrix[i][minColIndex];
-    matrix[i][minColIndex] = temp;
-  }
-}
-
-function findAndRemoveMaxValue(matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-  let maxValue = matrix[0][0];
-  let maxRowIndex = 0;
-  let maxColIndex = 0;
-
-  // Знаходження максимального елементу та його позиції
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (matrix[i][j] > maxValue) {
-        maxValue = matrix[i][j];
-        maxRowIndex = i;
-        maxColIndex = j;
-      }
-    }
-  }
-
-  // Видалення рядка та стовпця, що містять максимальний елемент
-  matrix.splice(maxRowIndex, 1);
+  matrix.splice(maxIndex, 1);
 
   for (let i = 0; i < matrix.length; i++) {
-    matrix[i].splice(maxColIndex, 1);
+    matrix[i].splice(maxIndex, 1);
   }
+
+  return matrix;
 }
 
-function findAndRemoveMultipleMaxValues(matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-  let maxValues = [];
-  let maxRowIndex = [];
+// Функція для знаходження мінімального та максимального елементів у кожному стовпці та обміну їх
+function swapWithMinAndMax(matrix) {
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
 
-  // Знаходження максимальних елементів та їх позицій
-  for (let i = 0; i < rows; i++) {
-    let rowMax = Math.max(...matrix[i]);
-    maxValues.push(rowMax);
+  for (let col = 0; col < numCols; col++) {
+    let minVal = matrix[0][col];
+    let maxVal = matrix[0][col];
+    let minIndex = 0;
+    let maxIndex = 0;
+
+    for (let row = 1; row < numRows; row++) {
+      if (matrix[row][col] < minVal) {
+        minVal = matrix[row][col];
+        minIndex = row;
+      }
+      if (matrix[row][col] > maxVal) {
+        maxVal = matrix[row][col];
+        maxIndex = row;
+      }
+    }
+
+    const temp = matrix[minIndex][col];
+    matrix[minIndex][col] = matrix[maxIndex][col];
+    matrix[maxIndex][col] = temp;
   }
 
-  let max = Math.max(...maxValues);
+  return matrix;
+}
 
-  for (let i = 0; i < rows; i++) {
-    if (maxValues[i] === max) {
-      maxRowIndex.push(i);
+// Функція для знаходження максимального значення в матриці та видалення рядку та стовпця, де воно знаходиться
+function swapWithMinAndMax(matrix) {
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
+
+  for (let col = 0; col < numCols; col++) {
+    let minVal = matrix[0][col];
+    let maxVal = matrix[0][col];
+    let minIndex = 0;
+    let maxIndex = 0;
+
+    for (let row = 1; row < numRows; row++) {
+      const currentVal = matrix[row][col];
+      if (currentVal < minVal) {
+        minVal = currentVal;
+        minIndex = row;
+      }
+      if (currentVal > maxVal) {
+        maxVal = currentVal;
+        maxIndex = row;
+      }
+    }
+
+    const temp = matrix[minIndex][col];
+    matrix[minIndex][col] = matrix[maxIndex][col];
+    matrix[maxIndex][col] = temp;
+  }
+
+  return matrix;
+}
+
+// Функція для видалення рядків та стовпців, що містять багато максимумів
+function removeWithMultipleMaxValues(matrix) {
+  if (!matrix || matrix.length === 0 || matrix[0].length === 0) {
+    return [];
+  }
+
+  const numRows = matrix.length;
+  const numCols = matrix[0].length;
+
+  const maxCountsInRows = new Array(numRows).fill(0);
+  const maxCountsInCols = new Array(numCols).fill(0);
+
+  // Знаходимо кількість максимальних значень в кожному рядку та стовпці
+  for (let i = 0; i < numRows; i++) {
+    for (let j = 0; j < numCols; j++) {
+      const value = matrix[i][j];
+      if (value === Math.max(...matrix[i])) {
+        maxCountsInRows[i]++;
+      }
+      if (value === Math.max(...matrix.map((row) => row[j]))) {
+        maxCountsInCols[j]++;
+      }
     }
   }
 
-  // Видалення рядків, що містять максимуми
-  for (let i = maxRowIndex.length - 1; i >= 0; i--) {
-    matrix.splice(maxRowIndex[i], 1);
+  // Знаходимо максимальну кількість максимальних значень в рядках та стовпцях
+  const maxCountInRows = Math.max(...maxCountsInRows);
+  const maxCountInCols = Math.max(...maxCountsInCols);
+
+  // Створюємо нову матрицю без рядків та стовпців з максимальною кількістю максимальних значень
+  const newMatrix = [];
+  for (let i = 0; i < numRows; i++) {
+    if (maxCountsInRows[i] < maxCountInRows) {
+      const newRow = [];
+      for (let j = 0; j < numCols; j++) {
+        if (maxCountsInCols[j] < maxCountInCols) {
+          newRow.push(matrix[i][j]);
+        }
+      }
+      newMatrix.push(newRow);
+    }
   }
+
+  return newMatrix;
 }
 
-function swapRowAndColumnWithMaxAndMin(matrix) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
+// Функція для обміну рядка та стовпця з максимумом і мінімумом
+function swapWithMaxAndMin(matrix) {
+  let maxVal = -Infinity;
+  let maxRow, maxCol;
+  let minVal = Infinity;
+  let minRow, minCol;
 
-  // Знаходження максимального та мінімального елементів
-  let maxElement = matrix[0][0];
-  let minElement = matrix[0][0];
-  let maxRowIndex = 0;
-  let maxColIndex = 0;
-  let minRowIndex = 0;
-  let minColIndex = 0;
-
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (matrix[i][j] > maxElement) {
-        maxElement = matrix[i][j];
-        maxRowIndex = i;
-        maxColIndex = j;
+  for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < matrix[0].length; j++) {
+      if (matrix[i][j] > maxVal) {
+        maxVal = matrix[i][j];
+        maxRow = i;
+        maxCol = j;
       }
-      if (matrix[i][j] < minElement) {
-        minElement = matrix[i][j];
-        minRowIndex = i;
-        minColIndex = j;
+      if (matrix[i][j] < minVal) {
+        minVal = matrix[i][j];
+        minRow = i;
+        minCol = j;
       }
     }
   }
 
-  // Поміняти місцями рядок та стовпець з максимумом та рядок та стовпець з мінімумом
-  const tempRow = matrix[maxRowIndex].slice();
-  matrix[maxRowIndex] = matrix[minRowIndex].slice();
-  matrix[minRowIndex] = tempRow;
+  const tempRow = matrix[maxRow].slice();
+  matrix[maxRow] = matrix[minRow].slice();
+  matrix[minRow] = tempRow;
 
-  for (let i = 0; i < rows; i++) {
-    const temp = matrix[i][maxColIndex];
-    matrix[i][maxColIndex] = matrix[i][minColIndex];
-    matrix[i][minColIndex] = temp;
+  for (let i = 0; i < matrix.length; i++) {
+    const temp = matrix[i][maxCol];
+    matrix[i][maxCol] = matrix[i][minCol];
+    matrix[i][minCol] = temp;
   }
+
+  return matrix;
 }
 
-const rows = 3;
-const cols = 3;
-const minValue = 10;
-const maxValue = 100;
-const k = 0; // Кількість позицій для зсуву
-
-const matrix = createMatrix(rows, cols, minValue, maxValue);
+// Використання функцій
+const rows = 4;
+const columns = 5;
+const minValue = 0;
+const maxValue = 10;
+const matrix = createMatrix(rows, columns, minValue, maxValue);
 console.log("Початкова матриця:");
 printMatrix(matrix);
 
-cyclicShiftMatrix(matrix, k);
-console.log("Матриця після циклічного зсуву:");
-printMatrix(matrix);
+const k = 2;
 
-const sum = sumElementsAfterThird(matrix);
-console.log("Сума елементів після третього в кожному рядку:", sum);
+// Завдання 1
 
-// subtractRowMeans(matrix);
+// const shiftedMatrix = cyclicShift(matrix, k);
+// console.log("Матриця після циклічного зсуву:");
+// printMatrix(shiftedMatrix);
+
+// Завдання 2
+
+// const sums = sumAfterThirdElement(matrix);
+// console.log("Суми елементів після третього в кожному рядку:");
+// console.log(sums);
+
+// Завдання 3
+
+// const subtractedMatrix = subtractRowAverage(matrix);
+// console.log("Матриця після віднімання середнього арифметичного рядка:");
+// printMatrix(subtractedMatrix);
+
+// Завдання 4
+
+// const matrixWithoutMax = removeWithMax(matrix);
+// console.log("Матриця без рядків та стовпців із максимальними елементами:");
+// printMatrix(matrixWithoutMax);
+
+// Завдання 5
+
+// const matrixWithSwappedColumns = swapWithMinAndMax(matrix);
 // console.log(
-//   "Матриця після віднімання середнього арифметичного від кожного рядка:"
+//   "Матриця з поміняними стовпцями з мінімальним і максимальними елементами:"
 // );
-// printMatrix(matrix);
+// printMatrix(matrixWithSwappedColumns);
 
-// findAndRemoveMaxElements(matrix);
+// Завдання 6
+
+// const matrixWithoutMaxValue = removeWithMaxValue(matrix);
+// console.log("Матриця без рядка та стовпця з максимальним значенням:");
+// printMatrix(matrixWithoutMaxValue);
+
+// Завдання 7
+
+// const matrixWithoutMultipleMaxValues = removeWithMultipleMaxValues(matrix);
 // console.log(
-//   "Матриця після видалення рядків та стовпців, що містять максимальні елементи:"
+//   "Матриця без рядків та стовпців з багатьма максимальними елементами:"
 // );
-// printMatrix(matrix);
-// swapColumnsWithMaxAndMin(matrix);
-// console.log(
-//   "Матриця після обміну стовпців з максимальним і мінімальним елементами:"
-// );
-// printMatrix(matrix);
+// printMatrix(matrixWithoutMultipleMaxValues);
 
-// findAndRemoveMaxValue(matrix);
-// console.log(
-//   "Матриця після видалення рядка та стовпця з максимальним елементом:"
-// );
-// printMatrix(matrix);
+// Завдання 8
 
-// findAndRemoveMultipleMaxValues(matrix);
-// console.log("Матриця після видалення рядків, що містять багато максимумів:");
-// printMatrix(matrix);
-
-swapRowAndColumnWithMaxAndMin(matrix);
+const matrixWithSwappedMaxAndMin = swapWithMaxAndMin(matrix);
 console.log(
-  "Матриця після обміну рядка і стовпця з максимумом та рядка і стовпця з мінімумом:"
+  "Матриця з поміняними рядком і стовпцем з максимальним і мінімальним значеннями:"
 );
-printMatrix(matrix);
+printMatrix(matrixWithSwappedMaxAndMin);
