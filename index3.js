@@ -1,10 +1,9 @@
-// Функція для створення матриці заданої довжини та діапазону значень
+// Функція для створення матриці заданої довжини
 function createMatrix(rows, columns, minValue, maxValue) {
   const matrix = [];
   for (let i = 0; i < rows; i++) {
     const row = [];
     for (let j = 0; j < columns; j++) {
-      // Генеруємо випадкове число в заданому діапазоні
       const value =
         Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
       row.push(value);
