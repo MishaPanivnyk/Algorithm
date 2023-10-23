@@ -32,7 +32,7 @@ function printMatrix(matrix) {
     console.log(rowStr);
   }
 }
-// Функція для циклічного зсуву матриці на k позицій вправо та на k догори
+// 1 Функція для циклічного зсуву матриці на k позицій вправо та на k догори
 function cyclicShift(matrix, k) {
   const rows = matrix.length;
   const cols = matrix[0].length;
@@ -51,7 +51,7 @@ function cyclicShift(matrix, k) {
   return shiftedMatrix;
 }
 
-// Функція для знаходження суми елементів матриці, розміщених після третього елементу кожного рядка
+// 2 Функція для знаходження суми елементів матриці, розміщених після третього елементу кожного рядка
 function sumAfterThirdElement(matrix) {
   const sums = [];
   for (let i = 0; i < matrix.length; i++) {
@@ -64,7 +64,7 @@ function sumAfterThirdElement(matrix) {
   return sums;
 }
 
-// Функція для віднімання від елементів кожного рядка матриці середнього арифметичного рядка
+// 3 Функція для віднімання від елементів кожного рядка матриці середнього арифметичного рядка
 function subtractRowAverage(matrix) {
   const result = [];
   for (let i = 0; i < matrix.length; i++) {
@@ -83,7 +83,7 @@ function subtractRowAverage(matrix) {
   return result;
 }
 
-// Функція для знаходження максимальних елементів у матриці та видалення відповідних рядків та стовпців
+// 4  Функція для знаходження максимальних елементів у матриці та видалення відповідних рядків та стовпців
 function removeWithMax(matrix) {
   if (matrix.length === 0 || matrix[0].length === 0) {
     return [];
@@ -110,7 +110,7 @@ function removeWithMax(matrix) {
   return matrix;
 }
 
-// Функція для знаходження мінімального та максимального елементів у кожному стовпці та обміну їх
+// 5 Функція для знаходження мінімального та максимального елементів у кожному стовпці та обміну їх
 function swapWithMinAndMax(matrix) {
   const numRows = matrix.length;
   const numCols = matrix[0].length;
@@ -140,7 +140,7 @@ function swapWithMinAndMax(matrix) {
   return matrix;
 }
 
-// Функція для знаходження максимального значення в матриці та видалення рядку та стовпця, де воно знаходиться
+// 6 Функція для знаходження максимального значення в матриці та видалення рядку та стовпця, де воно знаходиться
 function swapWithMinAndMax(matrix) {
   const numRows = matrix.length;
   const numCols = matrix[0].length;
@@ -171,7 +171,7 @@ function swapWithMinAndMax(matrix) {
   return matrix;
 }
 
-// Функція для видалення рядків та стовпців, що містять багато максимумів
+// 7 Функція для видалення рядків та стовпців, що містять багато максимумів
 function removeWithMultipleMaxValues(matrix) {
   if (!matrix || matrix.length === 0 || matrix[0].length === 0) {
     return [];
@@ -217,7 +217,7 @@ function removeWithMultipleMaxValues(matrix) {
   return newMatrix;
 }
 
-// Функція для обміну рядка та стовпця з максимумом і мінімумом
+// 8 Функція для обміну рядка та стовпця з максимумом і мінімумом
 function swapWithMaxAndMin(matrix) {
   let maxVal = -Infinity;
   let maxRow, maxCol;
