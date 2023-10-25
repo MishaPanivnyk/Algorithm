@@ -141,31 +141,24 @@ function swapWithMinAndMax(matrix) {
 }
 
 // 6 Функція для знаходження максимального значення в матриці та видалення рядку та стовпця, де воно знаходиться
-function swapWithMinAndMax(matrix) {
-  const numRows = matrix.length;
-  const numCols = matrix[0].length;
+function removeWithMaxValue(matrix) {
+  let maxVal = -Infinity;
+  let maxRow, maxCol;
 
-  for (let col = 0; col < numCols; col++) {
-    let minVal = matrix[0][col];
-    let maxVal = matrix[0][col];
-    let minIndex = 0;
-    let maxIndex = 0;
-
-    for (let row = 1; row < numRows; row++) {
-      const currentVal = matrix[row][col];
-      if (currentVal < minVal) {
-        minVal = currentVal;
-        minIndex = row;
-      }
-      if (currentVal > maxVal) {
-        maxVal = currentVal;
-        maxIndex = row;
+  for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < matrix[0].length; j++) {
+      if (matrix[i][j] > maxVal) {
+        maxVal = matrix[i][j];
+        maxRow = i;
+        maxCol = j;
       }
     }
+  }
 
-    const temp = matrix[minIndex][col];
-    matrix[minIndex][col] = matrix[maxIndex][col];
-    matrix[maxIndex][col] = temp;
+  matrix.splice(maxRow, 1);
+
+  for (let i = 0; i < matrix.length; i++) {
+    matrix[i].splice(maxCol, 1);
   }
 
   return matrix;
@@ -297,9 +290,9 @@ const k = 2;
 
 // Завдання 6
 
-// const matrixWithoutMaxValue = removeWithMaxValue(matrix);
-// console.log("Матриця без рядка та стовпця з максимальним значенням:");
-// printMatrix(matrixWithoutMaxValue);
+const matrixWithoutMaxValue = removeWithMaxValue(matrix);
+console.log("Матриця без рядка та стовпця з максимальним значенням:");
+printMatrix(matrixWithoutMaxValue);
 
 // Завдання 7
 
@@ -311,8 +304,8 @@ const k = 2;
 
 // Завдання 8
 
-const matrixWithSwappedMaxAndMin = swapWithMaxAndMin(matrix);
-console.log(
-  "Матриця з поміняними рядком і стовпцем з максимальним і мінімальним значеннями:"
-);
-printMatrix(matrixWithSwappedMaxAndMin);
+// const matrixWithSwappedMaxAndMin = swapWithMaxAndMin(matrix);
+// console.log(
+//   "Матриця з поміняними рядком і стовпцем з максимальним і мінімальним значеннями:"
+// );
+// printMatrix(matrixWithSwappedMaxAndMin);
