@@ -15,7 +15,7 @@ class Queue {
 
   // Видаляє та повертає перший елемент черги (FIFO)
   dequeue() {
-    if (this.isEmpty()) {
+    if (this.items.length === 0) {
       return null; // Черга пуста
     }
     return this.items.shift();
