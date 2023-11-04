@@ -15,15 +15,13 @@ class Queue {
 
   // Видаляє та повертає перший елемент черги (FIFO)
   dequeue() {
-    if (this.items.length === 0) {
+    if (this.size() === 0) {
       return null; // Черга пуста
     }
-    return this.items.shift();
-  }
 
-  // Перевіряє, чи черга порожня
-  isEmpty() {
-    return this.items.length === 0;
+    const firstItem = this.items[0];
+    this.items.splice(0, 1);
+    return firstItem;
   }
 
   // Виводить всі елементи черги
