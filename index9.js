@@ -82,7 +82,7 @@ function findSixLargestReplace(arr) {
 
 // Спосіб 4: QuickSelect для знаходження шести найбільших елементів
 function findSixLargestQuickSelect(arr) {
-  const largestSix = arr.slice(0, 6).sort((a, b) => b - a);
+  const largestSix = arr.slice(0, 6);
 
   for (let i = 6; i < arr.length; i++) {
     let current = arr[i];
