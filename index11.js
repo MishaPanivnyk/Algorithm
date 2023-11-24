@@ -158,31 +158,31 @@ doublyLinkedList.addToEnd(2);
 doublyLinkedList.addToEnd(3);
 doublyLinkedList.addToEnd(4);
 
-console.log("Original list:");
+console.log("Початковий список:");
 doublyLinkedList.print();
 
-console.log("Max value:", doublyLinkedList.getMax());
-console.log("Min value:", doublyLinkedList.getMin());
+console.log("Максимальне значення:", doublyLinkedList.getMax());
+console.log("Мінімальне значення:", doublyLinkedList.getMin());
 
 doublyLinkedList.insertAtIndex(2, 10);
 
-console.log("List after inserting 10 at index 2:");
+console.log("Список після вставки числа 10 на позицію 2:");
 doublyLinkedList.print();
 
 doublyLinkedList.removeFirst();
 
-console.log("List after removing the first element:");
+console.log("Список після видалення першого елемента:");
 doublyLinkedList.print();
 
 doublyLinkedList.removeLast();
 
-console.log("List after removing the last element:");
+console.log("Список після видалення останнього елемента:");
 doublyLinkedList.print();
 
-console.log("Number of elements in the list:", doublyLinkedList.getCount());
+console.log("Кількість елементів у списку:", doublyLinkedList.getCount());
 
 const newArray = [20, 30, 40];
 doublyLinkedList.insertArrayAtIndex(1, newArray);
 
-console.log("List after inserting array at index 1:");
+console.log("Список після вставки масиву на позицію 1:");
 doublyLinkedList.print();
