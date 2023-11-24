@@ -150,8 +150,6 @@ class DoublyLinkedList {
   }
 }
 
-// Пример использования:
-
 const doublyLinkedList = new DoublyLinkedList();
 doublyLinkedList.addToEnd(1);
 doublyLinkedList.addToEnd(2);
