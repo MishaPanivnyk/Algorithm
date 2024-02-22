@@ -159,20 +159,43 @@ class DBForm {
   }
 
   getTopAndBottomNMonthlySubscribers(n) {
-    let sortedForms = this.forms.slice().sort((a, b) => {
-      let totalA = 0;
-      for (let i = 0; i < a.contacts.length; i++) {
-        totalA += a.contacts[i].monthlySubscriptionFee;
+    let sortedForms = [];
+    for (let i = 0; i < this.forms.length; i++) {
+      sortedForms.push(this.forms[i]);
+    }
+
+    for (let i = 0; i < sortedForms.length; i++) {
+      for (let j = i + 1; j < sortedForms.length; j++) {
+        let totalA = 0;
+        for (let k = 0; k < sortedForms[i].contacts.length; k++) {
+          totalA += sortedForms[i].contacts[k].monthlySubscriptionFee;
+        }
+        let totalB = 0;
+        for (let k = 0; k < sortedForms[j].contacts.length; k++) {
+          totalB += sortedForms[j].contacts[k].monthlySubscriptionFee;
+        }
+        if (totalB > totalA) {
+          let temp = sortedForms[i];
+          sortedForms[i] = sortedForms[j];
+          sortedForms[j] = temp;
+        }
       }
-      let totalB = 0;
-      for (let i = 0; i < b.contacts.length; i++) {
-        totalB += b.contacts[i].monthlySubscriptionFee;
+    }
+
+    let topN = [];
+    let bottomN = [];
+    for (let i = 0; i < n; i++) {
+      if (sortedForms[i]) {
+        topN.push(sortedForms[i]);
       }
-      return totalB - totalA;
-    });
+      if (sortedForms[sortedForms.length - 1 - i]) {
+        bottomN.push(sortedForms[sortedForms.length - 1 - i]);
+      }
+    }
+
     return {
-      topN: sortedForms.slice(0, n),
-      bottomN: sortedForms.slice(-n),
+      topN: topN,
+      bottomN: bottomN,
     };
   }
 }
@@ -198,21 +221,21 @@ form2.addContact(
 );
 dbForm.addForm(form2);
 
-console.log("Unique Languages:", dbForm.getUniqueLanguages());
+console.log("Унікальні мови:", dbForm.getUniqueLanguages());
 console.log(
-  "Students knowing English:",
+  "Студенти, які знають англійську мову:",
   dbForm.getStudentsKnowingLanguage("English")
 );
 console.log(
-  "Students knowing English at Advanced level:",
+  "Студенти, які володіють англійською на просунутому рівні:",
   dbForm.getStudentsKnowingLanguageAtLevel("English", "Advanced")
 );
 console.log(
-  "Total Monthly Subscription Fee for John:",
+  "Загальна місячна абонентська плата для Михайла:",
   dbForm.getTotalMonthlySubscriptionFee("panivnyk@gmail.com")
 );
 console.log(
-  "Top and Bottom N Monthly Subscribers:",
+  "Верхній і нижній N передплатників за місяць:",
   dbForm.getTopAndBottomNMonthlySubscribers(1)
 );
 console.log(form1);
