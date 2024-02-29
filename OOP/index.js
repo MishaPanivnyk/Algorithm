@@ -159,46 +159,28 @@ class DBForm {
   }
 
   getTopAndBottomNMonthlySubscribers(n) {
-    let sortedForms = [];
-    for (let i = 0; i < this.forms.length; i++) {
-      sortedForms.push(this.forms[i]);
-    }
+    let sortedForms = this.forms.slice().sort((a, b) => {
+      let totalA = 0;
+      for (let i = 0; i < a.contacts.length; i++) {
+        totalA += a.contacts[i].monthlySubscriptionFee;
+      }
+      let totalB = 0;
+      for (let i = 0; i < b.contacts.length; i++) {
+        totalB += b.contacts[i].monthlySubscriptionFee;
+      }
+      return totalB - totalA;
+    });
 
-    for (let i = 0; i < sortedForms.length; i++) {
-      for (let j = i + 1; j < sortedForms.length; j++) {
-        let totalA = 0;
-        for (let k = 0; k < sortedForms[i].contacts.length; k++) {
-          totalA += sortedForms[i].contacts[k].monthlySubscriptionFee;
-        }
-        let totalB = 0;
-        for (let k = 0; k < sortedForms[j].contacts.length; k++) {
-          totalB += sortedForms[j].contacts[k].monthlySubscriptionFee;
-        }
-        if (totalB > totalA) {
-          let temp = sortedForms[i];
-          sortedForms[i] = sortedForms[j];
-          sortedForms[j] = temp;
-        }
-      }
-    }
-
-    let topN = [];
-    let bottomN = [];
-    for (let i = 0; i < n; i++) {
-      if (sortedForms[i]) {
-        topN.push(sortedForms[i]);
-      }
-      if (sortedForms[sortedForms.length - 1 - i]) {
-        bottomN.push(sortedForms[sortedForms.length - 1 - i]);
-      }
-    }
+    let topNCount = Math.min(n, sortedForms.length);
+    let bottomNCount = Math.min(n, sortedForms.length);
 
     return {
-      topN: topN,
-      bottomN: bottomN,
+      topNCount: topNCount,
+      bottomNCount: bottomNCount,
     };
   }
 }
+
 // Приклад використання:
 let dbForm = new DBForm();
 
