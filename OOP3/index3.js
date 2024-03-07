@@ -1,83 +1,95 @@
 const fs = require("fs");
+const readline = require("readline");
 
 function readStudentsFromFile(filename) {
-  try {
-    const data = fs.readFileSync(filename, "utf8");
-    return data.trim().split("\n");
-  } catch (err) {
-    console.error(`Помилка при зчитуванні файлу ${filename}: ${err}`);
-    return [];
-  }
+  return new Promise((resolve, reject) => {
+    fs.readFile(filename, "utf8", (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const students = data.trim().split("\n");
+      resolve(students);
+    });
+  });
 }
 
 function readTopicsFromFile(filename) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filename, "utf8", (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const topics = data.trim().split("\n");
+      resolve(topics);
+    });
+  });
+}
+
+function writeResultsToFile(results) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile("results.txt", results.join("\n"), "utf8", (err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
+async function assignTopics() {
   try {
-    const data = fs.readFileSync(filename, "utf8");
-    return data.trim().split("\n");
-  } catch (err) {
-    console.error(`Помилка при зчитуванні файлу ${filename}: ${err}`);
-    return [];
-  }
-}
+    const students = await readStudentsFromFile("students.txt");
+    const topics = await readTopicsFromFile("topics.txt");
 
-const students = readStudentsFromFile("students.txt");
-const topics = readTopicsFromFile("topics.txt");
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
 
-if (topics.length < students.length) {
-  console.error("Кількість тем менша за кількість студентів");
-  process.exit(1);
-}
+    const assigned = [];
 
-function removeTopic(topic) {
-  const index = topics.indexOf(topic);
-  if (index !== -1) {
-    topics.splice(index, 1);
-  }
-}
-
-function assignRandomTopic(student) {
-  const randomIndex = Math.floor(Math.random() * topics.length);
-  const topic = topics[randomIndex];
-  removeTopic(topic);
-  return `${student}: ${topic}`;
-}
-
-function saveResultsToFile(filename, data) {
-  try {
-    fs.writeFileSync(filename, data.join("\n"));
-    console.log(`Результати збережено у файлі ${filename}`);
-  } catch (err) {
-    console.error(`Помилка при збереженні у файл ${filename}: ${err}`);
-  }
-}
-
-const assignments = [];
-let remainingStudents = students.length;
-
-console.log(
-  "Для присвоєння теми студенту, введіть + (плюс). Для завершення введіть exit."
-);
-
-process.stdin.on("data", function (data) {
-  const input = data.toString().trim();
-  if (input === "+") {
-    if (remainingStudents === 0) {
-      console.log("Всі студенти вже отримали теми.");
-      return;
-    }
-    const student = students.pop();
-    const assignment = assignRandomTopic(student);
-    assignments.push(assignment);
-    remainingStudents--;
     console.log(
-      `${assignment}. Залишилось студентів без теми: ${remainingStudents}`
+      'Початок зв\'язування студентів і тем. Натисніть "+" для назначення теми студенту або будь-яку іншу клавішу для завершення.'
     );
-  } else if (input === "exit") {
-    saveResultsToFile("assignments.txt", assignments);
-    process.exit(0);
-  } else {
-    console.log(
-      'Невірна команда. Введіть "+" для присвоєння теми студенту або "exit" для завершення.'
-    );
+
+    rl.on("line", (input) => {
+      if (input === "+") {
+        if (topics.length === 0) {
+          console.log("Немає більше тем для назначення.");
+          return;
+        }
+
+        const studentIndex = Math.floor(Math.random() * students.length);
+        const topicIndex = Math.floor(Math.random() * topics.length);
+
+        const student = students[studentIndex];
+        const topic = topics[topicIndex];
+
+        assigned.push(`${student}: ${topic}`);
+        console.log(`${student} отримав тему: ${topic}`);
+
+        students.splice(studentIndex, 1);
+        topics.splice(topicIndex, 1);
+      } else {
+        rl.close();
+      }
+    });
+
+    rl.on("close", async () => {
+      await writeResultsToFile(assigned);
+      console.log(
+        'Зв\'язування завершено. Результати збережено в файлі "results.txt".'
+      );
+      console.log(`Залишилось ${students.length} студентів без теми.`);
+      process.exit(0);
+    });
+  } catch (err) {
+    console.error("Сталася помилка:", err);
   }
-});
+}
+
+// Запускаємо головну функцію
+assignTopics();

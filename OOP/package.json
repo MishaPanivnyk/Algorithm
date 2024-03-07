@@ -1,5 +1,5 @@
 {
-  "main": "index3.js",
+  "main": "index.js",
   "scripts": {
     "start": "nodemon script.js",
     "test": "echo \"Error: no test specified\" && exit 1"

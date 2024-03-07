@@ -30,10 +30,10 @@ class FinancialArticle {
 }
 
 class PersonalInformationForm {
-  constructor(fullName, dateOfBirth, email) {
+  constructor(fullName, dateOfBirth, emails) {
     this.fullName = fullName;
     this.dateOfBirth = dateOfBirth;
-    this.email = email;
+    this.emails = emails || [];
     this.languages = [];
     this.interests = [];
     this.contacts = [];
@@ -104,9 +104,9 @@ class DBForm {
 
   getUniqueLanguages() {
     let languagesSet = new Set();
-    for (let form of this.forms) {
-      for (let language of form.languages) {
-        languagesSet.add(language.name);
+    for (let i = 0; i < this.forms.length; i++) {
+      for (let j = 0; j < this.forms[i].languages.length; j++) {
+        languagesSet.add(this.forms[i].languages[j].name);
       }
     }
     return Array.from(languagesSet);
@@ -114,9 +114,9 @@ class DBForm {
 
   getStudentsKnowingLanguage(languageName) {
     let count = 0;
-    for (let form of this.forms) {
-      for (let language of form.languages) {
-        if (language.name === languageName) {
+    for (let i = 0; i < this.forms.length; i++) {
+      for (let j = 0; j < this.forms[i].languages.length; j++) {
+        if (this.forms[i].languages[j].name === languageName) {
           count++;
           break;
         }
@@ -125,13 +125,13 @@ class DBForm {
     return count;
   }
 
-  getStudentsKnowingLanguageAtLevel(languageName, proficiencyLevel) {
+  getLanguageLevel(languageName, proficiencyLevel) {
     let count = 0;
-    for (let form of this.forms) {
-      for (let language of form.languages) {
+    for (let i = 0; i < this.forms.length; i++) {
+      for (let j = 0; j < this.forms[i].languages.length; j++) {
         if (
-          language.name === languageName &&
-          language.proficiencyLevel === proficiencyLevel
+          this.forms[i].languages[j].name === languageName &&
+          this.forms[i].languages[j].proficiencyLevel === proficiencyLevel
         ) {
           count++;
           break;
@@ -141,12 +141,12 @@ class DBForm {
     return count;
   }
 
-  getTotalMonthlySubscriptionFee(email) {
-    for (let form of this.forms) {
-      if (form.email === email) {
+  getMonthlySubscription(fullName) {
+    for (let i = 0; i < this.forms.length; i++) {
+      if (this.forms[i].fullName === fullName) {
         let totalFee = 0;
-        for (let contact of form.contacts) {
-          totalFee += contact.monthlySubscriptionFee;
+        for (let j = 0; j < this.forms[i].contacts.length; j++) {
+          totalFee += this.forms[i].contacts[j].monthlySubscriptionFee;
         }
         return totalFee;
       }
@@ -154,65 +154,70 @@ class DBForm {
     return null;
   }
 
-  getTopAndBottom(n) {
+  getTopAndBottom(n, isTop = true) {
     let sortedForms = this.forms.slice();
-    let topNCount = 0;
-    let bottomNCount = 0;
+    sortedForms.sort((a, b) => {
+      let totalA = this.getTotalMonthlySubscription(a);
+      let totalB = this.getTotalMonthlySubscription(b);
+      return isTop ? totalB - totalA : totalA - totalB;
+    });
 
-    for (let i = 0; i < sortedForms.length - 1; i++) {
-      for (let j = 0; j < sortedForms.length - 1 - i; j++) {
-        let totalA = 0;
-        for (let k = 0; k < sortedForms[j].contacts.length; k++) {
-          totalA += sortedForms[j].contacts[k].monthlySubscriptionFee;
-        }
-        let totalB = 0;
-        for (let k = 0; k < sortedForms[j + 1].contacts.length; k++) {
-          totalB += sortedForms[j + 1].contacts[k].monthlySubscriptionFee;
-        }
+    let count = Math.min(n, sortedForms.length);
 
-        if (totalA < totalB) {
-          let temp = sortedForms[j];
-          sortedForms[j] = sortedForms[j + 1];
-          sortedForms[j + 1] = temp;
-        }
-      }
+    let subscribers = [];
+
+    for (let i = 0; i < count; i++) {
+      subscribers.push({
+        name: sortedForms[i].fullName,
+        monthlySubscription: this.getTotalMonthlySubscription(sortedForms[i]),
+      });
     }
 
-    topNCount = Math.min(n, sortedForms.length);
-    bottomNCount = Math.min(n, sortedForms.length);
-
-    return {
-      topNCount: topNCount,
-      bottomNCount: bottomNCount,
-    };
+    return subscribers;
+  }
+  getTotalMonthlySubscription(form) {
+    let totalFee = 0;
+    for (let i = 0; i < form.contacts.length; i++) {
+      totalFee += form.contacts[i].monthlySubscriptionFee;
+    }
+    return totalFee;
   }
 }
 
 // Приклад використання:
 let dbForm = new DBForm();
 
-let form1 = new PersonalInformationForm(
-  "Misha Panivnyk",
-  "2005-01-01",
-  "panivnyk@gmail.com"
-);
+let form1 = new PersonalInformationForm("Misha Panivnyk", "2005-01-01", [
+  "panivnykm@gmail.com",
+  "panivnyk2@gmail.com",
+]);
 form1.addLanguage(new Language("English", "Intermediate", "In Progress"));
 form1.addLanguage(new Language("Spanish", "Beginner", "Paused"));
-form1.addContact(new Contact(["123456789"], "Operator A", 20));
-form1.addContact(new Contact(["987654321"], "Operator B", 25));
-form1.addContact(new Contact(["987655421"], "Operator B", 100));
+form1.addInterest(new Interest("Sport", "1 year", "High"));
+let contact1 = new Contact(["12345678"], "Operator A", 20);
+let contact2 = new Contact(["564644812456"], "Operator B", 20);
+let contact3 = new Contact(["564645812456"], "Operator B", 100);
+form1.addContact(contact1);
+form1.addContact(contact2);
+form1.addContact(contact3);
 dbForm.addForm(form1);
 
-let form2 = new PersonalInformationForm(
-  "Marko Pyndus",
-  "2000-05-05",
-  "marko@gmail.com"
-);
+let form2 = new PersonalInformationForm("Marko Pyndus", "2000-05-05", [
+  "marko@gmail.com",
+]);
 form2.addLanguage(new Language("English", "Advanced", "Completed"));
 form2.addLanguage(new Language("French", "Intermediate", "In Progress"));
-form2.addContact(new Contact(["111222333"], "Operator A", 18));
+form2.addContact(new Contact(["564345812456"], "Operator A", 18));
 dbForm.addForm(form2);
 
+let form3 = new PersonalInformationForm("Marko Pyndus2", "2000-05-05", [
+  "marko2@gmail.com",
+]);
+form3.addLanguage(new Language("English", "Advanced", "Completed"));
+form3.addLanguage(new Language("French", "Intermediate", "In Progress"));
+form3.addContact(new Contact(["56434581245"], "Operator A", 18));
+form3.addContact(new Contact(["564345812459"], "Operator B", 50));
+dbForm.addForm(form3);
 console.log("Унікальні мови:", dbForm.getUniqueLanguages());
 console.log(
   "Студенти, які знають англійську мову:",
@@ -220,14 +225,14 @@ console.log(
 );
 console.log(
   "Студенти, які володіють англійською на просунутому рівні:",
-  dbForm.getStudentsKnowingLanguageAtLevel("English", "Advanced")
+  dbForm.getLanguageLevel("English", "Advanced")
 );
 console.log(
   "Загальна місячна абонентська плата для Михайла:",
-  dbForm.getTotalMonthlySubscriptionFee("panivnyk@gmail.com")
+  dbForm.getMonthlySubscription("Misha Panivnyk")
 );
 console.log(
   "Верхній і нижній N передплатників за місяць:",
-  dbForm.getTopAndBottom(1)
+  dbForm.getTopAndBottom(1, false)
 );
-console.log(form1);
+console.log(dbForm);
