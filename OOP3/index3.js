@@ -69,9 +69,10 @@ async function assignTopics() {
         const topic = topics[topicIndex];
 
         assigned.push(`${student}: ${topic}`);
-        console.log(`${student} отримав тему: ${topic}`);
-
+        console.log(`${student}`);
+        console.log(`Отримав тему: ${topic}`);
         students.splice(studentIndex, 1);
+        console.log(`Залишилось ${students.length} студентів без теми.`);
         topics.splice(topicIndex, 1);
       } else {
         rl.close();
@@ -83,7 +84,7 @@ async function assignTopics() {
       console.log(
         'Зв\'язування завершено. Результати збережено в файлі "results.txt".'
       );
-      console.log(`Залишилось ${students.length} студентів без теми.`);
+
       process.exit(0);
     });
   } catch (err) {
