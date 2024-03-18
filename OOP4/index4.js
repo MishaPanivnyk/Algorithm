@@ -92,6 +92,7 @@ class RoomType {
 }
 
 const livingRoomType = new RoomType("Вітальня", "Житлова кімната", true);
+const sleepRoomType = new RoomType("Спальня", "Житлова кімната", true);
 const kitchenRoomType = new RoomType("Кухня", "Кухонна кімната", false);
 const bathroomRoomType = new RoomType("Ванна", "Ванна кімната", false);
 
@@ -104,11 +105,16 @@ const room2 = new Room("Кімната 2", kitchenRoomType, "трикутна", 
   height: 4,
 });
 const room3 = new Room("Кімната 3", bathroomRoomType, "кругла", { radius: 3 });
+const room4 = new Room("Кімната 1", sleepRoomType, "прямокутна", {
+  length: 5,
+  width: 6,
+});
 
 const apartment = new Apartment();
 apartment.addRoom(room1);
 apartment.addRoom(room2);
 apartment.addRoom(room3);
+apartment.addRoom(room4);
 
 console.log("Загальна площа житлових кімнат:", apartment.getTotalLivingArea());
 console.log("Загальна площа всіх кімнат:", apartment.getTotalArea());
