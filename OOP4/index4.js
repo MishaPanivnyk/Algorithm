@@ -7,21 +7,36 @@ class Room {
   }
 
   calculateArea() {
-    let area = 0;
-    switch (this.shape) {
-      case "прямокутна":
-        area = this.params.length * this.params.width;
-        break;
-      case "трикутна":
-        area = 0.5 * this.params.base * this.params.height;
-        break;
-      case "кругла":
-        area = Math.PI * Math.pow(this.params.radius, 2);
-        break;
-      default:
-        console.log("Форма кімнати не підтримується");
-    }
-    return area;
+    return this.shape.calculateArea(this.params);
+  }
+}
+class RectangleRoom {
+  constructor() {
+    this.name = "прямокутна";
+  }
+
+  calculateArea(params) {
+    return params.length * params.width;
+  }
+}
+
+class TriangleRoom {
+  constructor() {
+    this.name = "трикутна";
+  }
+
+  calculateArea(params) {
+    return 0.5 * params.base * params.height;
+  }
+}
+
+class CircularRoom {
+  constructor() {
+    this.name = "кругла";
+  }
+
+  calculateArea(params) {
+    return Math.PI * Math.pow(params.radius, 2);
   }
 }
 
@@ -53,7 +68,7 @@ class Apartment {
   listRooms() {
     this.rooms.forEach((room) => {
       console.log(
-        `Назва: ${room.name}, Опис: ${room.type.description}, Форма: ${room.shape}`
+        `Назва: ${room.name}, Опис: ${room.type.description}, Форма: ${room.shape.name}`
       );
     });
   }
@@ -61,7 +76,7 @@ class Apartment {
   countRoomsByShape() {
     const roomCounts = {};
     this.rooms.forEach((room) => {
-      roomCounts[room.shape] = (roomCounts[room.shape] || 0) + 1;
+      roomCounts[room.shape.name] = (roomCounts[room.shape.name] || 0) + 1;
     });
     return roomCounts;
   }
@@ -79,15 +94,22 @@ class Apartment {
   }
 
   getWaterUsage() {
-    return Math.floor(Math.random() * 100);
+    let waterUsage = 0;
+    this.rooms.forEach((room) => {
+      if (room.type.name === "Кухня" || room.type.name === "Ванна") {
+        waterUsage += room.calculateArea();
+      }
+    });
+    return waterUsage;
   }
 }
 
 class RoomType {
-  constructor(name, description, isLiving) {
+  constructor(name, description, isLiving, shape) {
     this.name = name;
     this.description = description;
     this.isLiving = isLiving;
+    this.shape = shape;
   }
 }
 
@@ -96,16 +118,18 @@ const sleepRoomType = new RoomType("Спальня", "Житлова кімна�
 const kitchenRoomType = new RoomType("Кухня", "Кухонна кімната", false);
 const bathroomRoomType = new RoomType("Ванна", "Ванна кімната", false);
 
-const room1 = new Room("Кімната 1", livingRoomType, "прямокутна", {
+const room1 = new Room("Кімната 1", livingRoomType, new RectangleRoom(), {
   length: 5,
   width: 4,
 });
-const room2 = new Room("Кімната 2", kitchenRoomType, "трикутна", {
+const room2 = new Room("Кімната 2", kitchenRoomType, new TriangleRoom(), {
   base: 6,
   height: 4,
 });
-const room3 = new Room("Кімната 3", bathroomRoomType, "кругла", { radius: 3 });
-const room4 = new Room("Кімната 1", sleepRoomType, "прямокутна", {
+const room3 = new Room("Кімната 3", bathroomRoomType, new CircularRoom(), {
+  radius: 3,
+});
+const room4 = new Room("Кімната 1", sleepRoomType, new RectangleRoom(), {
   length: 5,
   width: 6,
 });
@@ -123,4 +147,4 @@ apartment.listRooms();
 console.log("Кількість кімнат кожної форми:", apartment.countRoomsByShape());
 console.log("Кількість кімнат кожного типу:", apartment.countRoomsByType());
 console.log("Витрачений газ:", apartment.getGasUsage());
-console.log("Витрачена вода:", apartment.getWaterUsage());
+console.log("Витрачена вода Кухня+Ванна:", apartment.getWaterUsage());
