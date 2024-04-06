@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Лічильник</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      div {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      label {
+        font-weight: bold;
+      }
+
+      button {
+        padding: 8px 16px;
+        margin-top: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      select {
+        padding: 8px;
+        margin-top: 10px;
+        border-radius: 4px;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin-top: 10px;
+      }
+
+      li {
+        margin-bottom: 5px;
+      }
+
+      span {
+        font-weight: normal;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <label>Total Work Time: <span id="totalWorkTime">0</span> s</label><br />
+      <label>Total Rest Time: <span id="totalRestTime">0</span> s</label><br />
+      <button id="startButton">Start</button>
+      <button id="pauseButton">Pause</button>
+      <button id="stopButton">Stop</button><br />
+      <label>Current Duration: <span id="currentDuration">0</span> s</label
+      ><br />
+      <select id="activitySelect">
+        <option value="Робота">Робота</option>
+        <option value="Відпочинок">Відпочинок</option></select
+      ><br />
+      <ul id="timeList"></ul>
+    </div>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
